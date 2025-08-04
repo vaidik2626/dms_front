@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Pencil, Trash } from "lucide-react";
 
 type Contact = {
@@ -47,17 +47,15 @@ const TransactionForm = () => {
   }, []);
 
   // Centralized function to get headers, including authorization
-  const getAuthHeaders = () => {
+  const getAuthHeaders = useCallback(() => {
     if (!authToken) {
-      // If no token, throw an error or return null.
-      // The API call functions will then catch this.
       throw new Error("Authentication token is missing.");
     }
     return {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${authToken}`, // Essential for your verifyToken middleware
+      'Authorization': `Bearer ${authToken}`,
     };
-  };
+  }, [authToken]);
 
   // --- Fetch Contacts on Component Mount (modified to use authToken) ---
   useEffect(() => {
@@ -103,7 +101,7 @@ const TransactionForm = () => {
     if (authToken) { // Only fetch if token exists
       fetchContacts();
     }
-  }, [authToken, getAuthHeaders]); // Rerun when authToken changes
+  }, [authToken]); // Only depend on authToken changes
 
   // --- API Call Functions (modified to use authToken) ---
   const addContactAPI = async (contact: Omit<Contact, 'id'>, type: "vepari" | "dalal") => {

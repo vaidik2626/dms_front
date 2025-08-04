@@ -2,7 +2,7 @@
 
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useFormContext } from '@/context/FormContext';
 import { Label } from '@/components/ui/label';
 import {
@@ -62,7 +62,7 @@ export const DiamondDetailsForm: React.FC<Props> = ({ markTabComplete }) => {
   }, []);
 
   // Helper to get authorization headers
-  const getAuthHeaders = () => {
+  const getAuthHeaders = useCallback(() => {
     if (!authToken) {
       console.error("Frontend: Auth token is null when trying to get headers.");
       throw new Error("Authentication token is missing.");
@@ -71,7 +71,7 @@ export const DiamondDetailsForm: React.FC<Props> = ({ markTabComplete }) => {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${authToken}`,
     };
-  };
+  }, [authToken]);
 
   // Effect to fetch vepari and dalal lists
   useEffect(() => {
@@ -125,7 +125,7 @@ export const DiamondDetailsForm: React.FC<Props> = ({ markTabComplete }) => {
     if (authToken) { // Only fetch if token is available
       fetchLists();
     }
-  }, [authToken, getAuthHeaders]); // Rerun when authToken changes
+  }, [authToken]); // Only depend on authToken changes
 
   // Form validation logic (unchanged)
   const validateForm = () => {
@@ -195,8 +195,6 @@ export const DiamondDetailsForm: React.FC<Props> = ({ markTabComplete }) => {
         body: JSON.stringify(payload),
       });
 
-      console.log('Frontend: Raw response object received:', res);
-      console.log('Frontend: Response status:', res.status, 'Response OK:', res.ok);
 
       const contentType = res.headers.get('content-type');
       console.log('Frontend: Response Content-Type header:', contentType);
