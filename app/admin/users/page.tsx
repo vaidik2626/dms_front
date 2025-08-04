@@ -63,7 +63,7 @@ export default function UserManagementPage() {
   const { user: currentUser } = useAuth();
   const router = useRouter();
 
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000/api";
+  const API_BASE_URL = "http://localhost:4000/api";
   const getAuthToken = () => localStorage.getItem("authToken");
   
 
